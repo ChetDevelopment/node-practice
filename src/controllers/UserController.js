@@ -1,53 +1,47 @@
-const UserModel = require('../models/UserModel');
-
-class UserController {
-    static async getAllUsers(req, res) {
-        try {
-            const users = await UserModel.getAllUsers();
-            res.json(users);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+import User from "../models/User.js";
+export class userController extends BaseController {
+  // GET ALL users
+  usersList = async (req, res) => {
+    try {
+      const users = await userController.getAll();
+      this.success(res, "Users retrieved successfully", users);
+    } catch (error) {
+      this.error(res, error.message, 500);
     }
+  }
 
-    static async createUser(req, res) {
-        try {
-            const userData = req.body;
-            const result = await UserModel.createUser(userData);
-            res.status(201).json({
-                message: 'User created', userId: result.insertId
-            });
-        }
-        catch (error) {
-            console.error('Error creating user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-
-
+  // CREATE user
+  createUser = async (res, req) => {
+    const name = req.body.name;
+    try{
+      const user = await user.create(name);
+      this.success(res, "User created successfully", user, 201);
+    } catch (error) {
+      this.error(res, error.message, 500);
     }
+  }
 
-        static async updateUser(req, res) {
-        try {
-            const userId = req.params.id;
-            const userData = req.body;
-            await UserModel.updateUser(userId, userData);
-            res.json({ message: 'User updated' });
-        } catch (error) {
-            console.error('Error updating user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+  // UPDATE user
+  updateUser = async (res, req) => {
+    const id = req.params.id;
+    const name = req.body.name;
+    try{
+      const user = await user.update(id, name);
+      this.success(res, "User updated successfully", user);
+    } catch (error) {
+      this.error(res, error.message, 500);
     }
+  }
 
-    static async deleteUser(req, res) {
-        try {
-            const userId = req.params.id;
-            await UserModel.deleteUser(userId);
-            res.json({ message: 'User deleted' });
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+  // DELETE user
+  deleteUser = async (res, req) => {
+    const id = req.params.id;
+    try{
+      await user.delete(id);
+      this.success(res, "User deleted successfully");
+    } catch (error) {
+      this.error(res, error.message, 500);
     }
+  }
+
 }
-module.exports = UserController;
